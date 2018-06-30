@@ -1,0 +1,12 @@
+---
+version: '2'
+services:
+  this-image:
+    restart: 'no'
+    build:
+      context: ./
+      args:
+        url: ${url}
+    image: ${REGISTRY}/${DOCKER_ID}/images/${NAME}:${MINIM_VER}
+    # for test
+    command: /bin/sh -c 'while true; do echo dummy; sleep 600; done'

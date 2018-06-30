@@ -1,0 +1,3 @@
+---
+name: docker-minimserver
+registry: gitlab.io.example.com:5050

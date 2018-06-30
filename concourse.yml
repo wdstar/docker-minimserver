@@ -1,0 +1,76 @@
+---
+# Concourse pipeline: docker-minimserver
+#   $ fly -t $CC_TARGET sp -p docker-minimserver -c concourse.yml -l fly-vars.yml -l ~/sec/credentials-prod.yml
+resources:
+- name: src-git
+  type: git
+  source:
+    uri: https://github.com/wdstar/docker-minimserver
+    branch: master
+- name: base-image
+  type: docker-image
+  source:
+    repository: java
+    tag: 8-jre
+    registry_mirror: https://((registry-mirror-domain))
+      # e.g. https://registry.docker.example.com:5000
+    ca_certs:
+    - domain: ((registry-mirror-domain))
+      # e.g. registry.docker.example.com:5000
+      cert: ((docker-reg-ca-cert))
+  check_every: 1h
+- name: docker-reg
+  type: docker-image
+  source:
+    #repository: ((docker-id))/((name))
+    # Note: use an internal registry for the MinimServer license
+    #   http://minimserver.com/license.html
+    repository: ((registry))/((docker-id))/images/((name))
+    #tag: latest
+    #username: ((docker-id))
+    #password: ((docker-pw))
+    username: ((gitlab-id))
+    password: ((gitlab-pw))
+    ca_certs:
+      - domain: ((registry))
+        cert: ((docker-reg-ca-cert))
+  check_every: 6h
+
+jobs:
+- name: build-img
+  plan:
+  - aggregate:
+    - get: src-git
+      params:
+        depth: 5
+      trigger: false
+    - get: base-image
+      #params:
+      #  skip_download: true  # default: false
+      trigger: true
+  - task: put-minimserver-ver
+    image: base-image
+    config:
+      platform: linux
+      inputs:
+      - name: src-git
+      outputs:
+      - name: minimserver
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          . src-git/.env
+          echo $MINIM_VER > minimserver/ver
+          cat minimserver/ver
+          echo "{\"url\": \"${url}\"}" > minimserver/build-args.json
+          cat minimserver/build-args.json
+  - put: docker-reg
+    params:
+      build: src-git
+      build_args_file: minimserver/build-args.json
+      tag: minimserver/ver
+      tag_as_latest: true  # default: false
+    get_params:
+      skip_download: true  # default: false
