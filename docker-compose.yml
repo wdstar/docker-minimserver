@@ -1,12 +1,16 @@
 ---
 version: '2'
 services:
-  this-image:
+  dlna-server:
     restart: 'no'
     build:
       context: ./
       args:
         url: ${url}
-    image: ${REGISTRY}/${DOCKER_ID}/images/${NAME}:${MINIM_VER}
+    image: ${REGISTRY}/${NAME}:${MINIM_VER}
+    network_mode: "host"
+    volumes:
+    - "${PWD}/data:/opt/minimserver/data:rw"
+    - "${PWD}/media:/media:ro"
     # for test
-    command: /bin/sh -c 'while true; do echo dummy; sleep 600; done'
+    #command: /bin/sh -c 'while true; do echo dummy; sleep 600; done'
