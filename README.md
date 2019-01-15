@@ -6,26 +6,23 @@ MinimServer is a new UPnP AV music server with a number of innovative features t
 
 # Installation
 
-Pull the image from the docker registry e.g.
+Clone this repository:
 
-```docker pull tromatik/docker-minimserver```
+```git clone https://github.com/wdstar/docker-minimserver.git```
 
-or build it:  
-
-```git clone https://github.com/Trauma/docker-minimserver.git```
+Build the image:
 
 ```cd docker-minimserver```
 
-```docker build --tag="$USER/docker-minimserver" .```
+```git checkout armhf #Run this command if the device is a Raspberry```
 
-run your build:
-```docker run -d --name=<your_container_name> --net=host -v <path_to_your_music>:/media/:ro $USER/docker-minimserver:latest```
+```docker build --tag="$USER/docker-minimserver" .```
 
 # Quick Start
 
-Run the downloaded image (as a daemon):
+Run your build (as a daemon):
 
-```docker run -d --name=<your_container_name> --net=host -v <path_to_your_music>:/media/:ro tromatik/docker-minimserver:latest```
+```docker run -d --name=<your_container_name> --net=host -v <path_to_your_music>:/media/:ro $USER/docker-minimserver:latest```
 
 # Configuration
 
@@ -33,15 +30,15 @@ Configuration is available through minimwatch program
 
 # Shell Access
 
-
 For debugging and maintenance purposes you may want access the containers shell. Either add after the run command or tun e.g.
 
 ```docker exec -it "$USER/docker-minimserver" bash  ```
 
 or
+
 ```docker ps```
 ```docker exec -it <container-id> bash   ```
 
 # Autostart the container
 
-add the parameter --restart=always to your docker run command.
+add the parameter ``--restart=always`` to your docker run command.
