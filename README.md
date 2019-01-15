@@ -14,7 +14,7 @@ Build the image:
 
 ```cd docker-minimserver```
 
-```git checkout armhf #Run this command if the device is a Raspberry:```
+```git checkout armhf #Run this command if the device is a Raspberry```
 
 ```docker build --tag="$USER/docker-minimserver" .```
 
